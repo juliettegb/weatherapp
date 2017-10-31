@@ -47,6 +47,11 @@ var cityList = [];
     res.render('Liste', {cityList});
   });
 
+  app.get("/update", function(req, res){
+    var updatedcityList = req.query.listemaj;
+    console.log(updatedcityList);
+  });
+
 app.listen(8080, function(error, response, body){
   console.log('Server listening on port 8080');
 });
