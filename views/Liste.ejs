@@ -10,6 +10,24 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+  #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+  #sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
+  html>body #sortable li { height: 3.5em; line-height: 2em; }
+  .ui-state-highlight { height: 3.5em; line-height: 2em; }
+  </style>
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#sortable" ).sortable({
+      placeholder: "ui-state-highlight"
+    });
+    $( "#sortable" ).disableSelection();
+  } );
+  </script>
+
 </head>
 <body>
 
@@ -32,7 +50,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-offset-2 col-sm-8">
-        <ul class="list-group">
+        <ul id= "sortable" class="list-group ui-state-default">
           <% for (var i=0; i<cityList.length; i++){ %>
           <li class="list-group-item"><span class="city"><%= cityList[i].name %></span> <img class="logo-meteo" src="<%=cityList[i].icon%>"> <span class="desc"><%= cityList[i].desc %></span> <span class="label label-warning"><%= cityList[i].tempMax %> °C</span> <span class="label label-default"><%= cityList[i].tempMin %> °C</span> <a href="/delete?position=<%=i%>"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
           <% }; %>
