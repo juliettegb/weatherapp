@@ -12,46 +12,60 @@
 
 
 var express = require('express'); // pour importer le module
+var request = require ('request');
 var app = express(); // initialisation du serveur
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-var request = require ("request");
 
 var cityList = [];
 
-  app.get('/', function(req, res){
-    res.render('Liste', {cityList}); // ou {cities: cityList} et dans ce cas il faut appeler cities dans le doc ejs
-  });
+app.get('/', function(req, res){
+  res.render('Liste', {cityList}); // ou {cities: cityList} et dans ce cas il faut appeler cities dans le doc ejs
+});
 
-  app.get("/add", function(req, res){
+app.get("/add", function(req, res){
 
-    request("http://api.openweathermap.org/data/2.5/weather?APPID=74f8a59f951845ccaeea31a9b0c9ae11&lang=fr&units=metric&q="+req.query.city+"", function(error, response, body){
-      var body = JSON.parse(body);
-      var newcity = {name: body.name, desc: body.weather[0].description, icon: "http://openweathermap.org/img/w/"+body.weather[0].icon+".png", tempMax: body.main.temp_max, tempMin: body.main.temp_min};
-      cityList.push(newcity);
-
-      console.log("http://openweathermap.org/img/w/"+body.weather[0].icon+".png")
-      console.log(req.query.city);
-      console.log(body.name);
-      console.log(body.weather[0].description);
-      console.log(body.weather[0].icon);
-      console.log(body.main.temp_max);
-      console.log(body.main.temp_min);
-      res.render('Liste', {cityList});
-    });
-
-  });
-
-  app.get("/delete", function(req, res){
-    cityList.splice(req.query.position, 1);
+  request("http://api.openweathermap.org/data/2.5/weather?APPID=74f8a59f951845ccaeea31a9b0c9ae11&lang=fr&units=metric&q="+req.query.city+"", function(error, response, body){
+    body = JSON.parse(body);
+    var newcity = {name: body.name, desc: body.weather[0].description, icon: "http://openweathermap.org/img/w/"+body.weather[0].icon+".png", tempMax: body.main.temp_max, tempMin: body.main.temp_min};
+    cityList.push(newcity);
+    console.log(body);
+    /*
+    console.log("http://openweathermap.org/img/w/"+body.weather[0].icon+".png")
+    console.log(req.query.city);
+    console.log(body.name);
+    console.log(body.weather[0].description);
+    console.log(body.weather[0].icon);
+    console.log(body.main.temp_max);
+    console.log(body.main.temp_min);
+    */
     res.render('Liste', {cityList});
   });
 
-  app.get("/update", function(req, res){
-    var updatedcityList = req.query.listemaj;
-    console.log(updatedcityList);
-  });
+});
 
-app.listen(8080, function(error, response, body){
+app.get("/delete", function(req, res){
+  cityList.splice(req.query.position, 1);
+  res.render('Liste', {cityList});
+});
+
+// Pb de la solution avec id = nom de ville, si j'ai deux fois le même nom l'ordre va en être affecté ! Voir autre solution avec id = position ou autre id unique avec timestamp (?)
+app.get("/update", function(req, res){
+  var updatedcityList = JSON.parse(req.query.listemaj); // pour "annuler" le JSON.stringify & pour info on aurait pu mettre var updatedcityList = JSON.parse(req.query.listemaj)
+  console.log(updatedcityList);
+  var cityListTmp = []; // Liste temporaire à laquelle j'ajoute la valeur du tiroir que je viens de tirer
+  for (var i=0; i<updatedcityList.length; i++){
+    for (var j=0; j<cityList.length; j++){
+      if (updatedcityList[i] == cityList[j].name){
+        cityListTmp.push(cityList[j]);
+      }
+    }
+  }
+
+  cityList = cityListTmp; // pour écraser l'ancien ordre de la liste
+  res.send({result : true}); // on met juste un "ok" car on n'exploite pas le ajax ici donc c'est plus léger de juste envoyer ça
+});
+
+app.listen(8080, function(){
   console.log('Server listening on port 8080');
 });

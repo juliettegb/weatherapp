@@ -2,28 +2,43 @@
 <html>
 <head>
   <meta charset="utf-8">
+
   <title>Weather App</title>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <script
+    src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+    integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+    crossorigin="anonymous"></script>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css">
 
-  <style>
-  #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-  #sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
-  html>body #sortable li { height: 3.5em; line-height: 2em; }
-  .ui-state-highlight { height: 3.5em; line-height: 2em; }
-  </style>
-
   <script>
-  $(function() {
-    $("#sortable").sortable({
-      placeholder: "ui-state-highlight"
-    });
+  $(function() { //permet de temporiser l'exécution car sinon on ferait appel à des éléments html qui n'existent même pas encore
+    $("#sortable").sortable();
     $("#sortable").disableSelection();
+
+    $("#sortable").on("sortupdate", function(event, ui) { // on n'exploite pas event et placeholder ici donc on peut même les enlever en fait! et habituellement on met ui plutôt que placeholder
+      var sortedIDs = $("#sortable").sortable("toArray"); // to array: nécessite de donner IDs uniques à nos éléments
+      console.log(sortedIDs);
+      var updatedcityListString = JSON.stringify(sortedIDs);
+      // console.log(updatedcityListString); //nouvel ordre des villes (ou bien nouvelle position si id = i)
+
+      $.getJSON("/update?listemaj="+updatedcityListString, function(data) {
+        if(data.result == true){
+          $(".list-group-item").each(function(index){ //index donne le num du li sur lequel on se trouve & each: fonction de jquery = à for mais plus simple
+        //  $(this).attr("id", index); //on boucle dans les li, this = moi, le li sur lequel on se trouve ; après "id" = nouvelle valeur à donner : seulement nécessaire quand id=i
+            $(this).find("a").attr("href", "/delete?position="+index ) //car sinon bug sur le bouton supprimer qui supprimait l'ancienne position associée
+          });
+        }
+      });
+    });
   });
   </script>
 </head>
@@ -56,19 +71,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-  $("#sortable").on("sortupdate", function(event, placeholder) {
-    console.log("tri ok!");
-    var sortedIDs = $("#sortable").sortable("toArray"); // to array: nécessite de donner IDs uniques à nos éléments
-    console.log(sortedIDs);
-    var updatedcityList = JSON.stringify(sortedIDs);
-    console.log(updatedcityList);
-    $.getJSON("/update?listemaj="+updatedcityList, function(updatedcityList) {
-    console.log(updatedcityList);
-    });
-  });
-  </script>
 
 </body>
 </html>
