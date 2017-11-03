@@ -2,45 +2,21 @@
 <html>
 <head>
   <meta charset="utf-8">
-
   <title>Weather App</title>
   <script
-    src="https://code.jquery.com/jquery-3.2.1.min.js"
-    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous"></script>
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
   <script
-    src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
-    integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
-    crossorigin="anonymous"></script>
+  src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+  integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+  crossorigin="anonymous"></script>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
   <!-- Latest compiled and minified JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="style.css">
-
-  <script>
-  $(function() { //permet de temporiser l'exécution car sinon on ferait appel à des éléments html qui n'existent même pas encore
-    $("#sortable").sortable();
-    $("#sortable").disableSelection();
-
-    $("#sortable").on("sortupdate", function(event, ui) { // on n'exploite pas event et placeholder ici donc on peut même les enlever en fait! et habituellement on met ui plutôt que placeholder
-      var sortedIDs = $("#sortable").sortable("toArray"); // to array: nécessite de donner IDs uniques à nos éléments
-      console.log(sortedIDs);
-      var updatedcityListString = JSON.stringify(sortedIDs);
-      // console.log(updatedcityListString); //nouvel ordre des villes (ou bien nouvelle position si id = i)
-
-      $.getJSON("/update?listemaj="+updatedcityListString, function(data) {
-        if(data.result == true){
-          $(".list-group-item").each(function(index){ //index donne le num du li sur lequel on se trouve & each: fonction de jquery = à for mais plus simple
-        //  $(this).attr("id", index); //on boucle dans les li, this = moi, le li sur lequel on se trouve ; après "id" = nouvelle valeur à donner : seulement nécessaire quand id=i
-            $(this).find("a").attr("href", "/delete?position="+index ) //car sinon bug sur le bouton supprimer qui supprimait l'ancienne position associée
-          });
-        }
-      });
-    });
-  });
-  </script>
+  <script src="./script.js"></script>
 </head>
 <body>
 
@@ -65,12 +41,18 @@
       <div class="col-xs-12 col-sm-offset-2 col-sm-8">
         <ul id= "sortable" class="list-group ui-state-default">
           <% for (var i=0; i<cityList.length; i++){ %>
-          <li id="<%= cityList[i].name %>" class="list-group-item"><span class="city"><%= cityList[i].name %></span> <img class="logo-meteo" src="<%=cityList[i].icon%>"> <span class="desc"><%= cityList[i].desc %></span> <span class="label label-warning"><%= cityList[i].tempMax %> °C</span> <span class="label label-default"><%= cityList[i].tempMin %> °C</span> <a href="/delete?id=<%=cityList[i]._id%>"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
-          <% }; %>
-        </ul>
-      </div>
+            <li data-lat= "<%= cityList[i].lat %>" data-lon="<%= cityList[i].lon %>" id="<%= cityList[i].name %>" class="list-group-item"><span class="city"><%= cityList[i].name %></span> <img class="logo-meteo" src="<%=cityList[i].icon%>"> <span class="desc"><%= cityList[i].desc %></span> <span class="label label-warning"><%= cityList[i].tempMax %></span> <span class="label label-default"><%= cityList[i].tempMin %></span> <a href="/delete?id=<%=cityList[i]._id%>"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
+            <% }; %>
+          </ul>
+        </div>
+      <div id="map"></div>
     </div>
   </div>
 
-</body>
-</html>
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpDVHnR-l2w5wOD3xBE1uKzNlLB0qD2O4&libraries=places&callback=initAutocomplete"
+    async defer></script>
+
+  </body>
+  </html>
