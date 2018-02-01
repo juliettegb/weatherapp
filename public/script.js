@@ -23,7 +23,6 @@ $(function() { //permet de temporiser l'exécution car sinon on ferait appel à 
     console.log("Entrée détectée: "+ entree);
   });
 
-
   $("#city").on("keypress", function(event){
     console.log("Entrée: "+ event.which);
   }); */
@@ -52,19 +51,13 @@ function initAutocomplete() { //Google n'accepte qu'une fonction de rappel dans 
       position: location,
       map: map,
     });
-    map.panTo(location);
+      map.panTo(location);
+      $(this).click(function(){
+      map.panTo(location);
+    })
+  //  map.panTo(location);
   });
 };
 
-/*
-1st step:
-Capter la saisie (on déclenche la demande dès qu'une lettre est saisie) -->
-apporter une écoute sur un signal qui va nous permettre de savoir qu'une
-nouvelle lettre a été renseignée. Récupérer input = blablaquivarie.
 
-Envoyer l'ordre, la question au webservice (ajax)
-
-Boucle : afficher info dans la console du nav (que nom ville, pas pays)
-
-https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyALD-Dfvhh3rW5r6twUYDyz_T75QMHsDcU&components=country:fr&input=pa
-*/
+// https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyALD-Dfvhh3rW5r6twUYDyz_T75QMHsDcU&components=country:fr&input=pa

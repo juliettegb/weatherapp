@@ -22,7 +22,7 @@
 
   <div class="container sectionCity">
     <div class="row">
-      <div class="col-xs-12 col-sm-offset-2 col-sm-8">
+      <div class="col-xs-12 col-sm-6">
         <form class="form-inline" action="/add">
           <div class="form-group">
             <label for="city">Ville</label>
@@ -38,18 +38,19 @@
   </div>
   <div class="container">
     <div class="row">
-      <div class="col-xs-12 col-sm-offset-2 col-sm-8">
-        <ul id= "sortable" class="list-group ui-state-default">
+      <div class="col-xs-12 col-sm-6">
+        <ul id= "sortable" class="list-group">
           <% for (var i=0; i<cityList.length; i++){ %>
             <li data-lat= "<%= cityList[i].lat %>" data-lon="<%= cityList[i].lon %>" id="<%= cityList[i].name %>" class="list-group-item"><span class="city"><%= cityList[i].name %></span> <img class="logo-meteo" src="<%=cityList[i].icon%>"> <span class="desc"><%= cityList[i].desc %></span> <span class="label label-warning"><%= cityList[i].tempMax %></span> <span class="label label-default"><%= cityList[i].tempMin %></span> <a href="/delete?id=<%=cityList[i]._id%>"><span class="glyphicon glyphicon-remove-circle"></span></a></li>
             <% }; %>
           </ul>
         </div>
-      <div id="map"></div>
+        <div class="col-xs-12 col-sm-6">
+          <div id="map"></div>
+        </div>
+      </div>
     </div>
-  </div>
-
-
+    
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpDVHnR-l2w5wOD3xBE1uKzNlLB0qD2O4&libraries=places&callback=initAutocomplete"
     async defer></script>
